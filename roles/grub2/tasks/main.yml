@@ -1,0 +1,13 @@
+---
+- name: Check grub2 packages
+  apt: name=grub2-common state=present
+  apt: name={{ item }} state=absent
+  with_items:
+  - grub2
+  - grub
+
+- name: Copy correct grub config
+  template: src=roles/grub2/templates/grub dest=/etc/default/grub owner=root group=root mode=0644
+
+- name: Generate grub2
+  command: /usr/sbin/update-grub

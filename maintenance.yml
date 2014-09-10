@@ -1,0 +1,9 @@
+---
+- name: Maintenance tasks
+  hosts: all
+  # user: root
+  sudo: yes
+
+  roles:
+    - grub2
+    - cleanpackages

@@ -1,0 +1,25 @@
+---
+- name: Check git
+  apt: name=git state=present
+  remote_user: root
+  sudo: yes
+
+- name: Check homeshick
+  stat: path=~/.homesick/repos/homeshick
+  register: homeshick_dir
+
+- name: Install homeshick
+  shell: git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+  when: homeshick_dir.stat.isdir is not defined or homeshick_dir.stat.isdir == false
+
+- name: Install my castles
+  shell: $HOME/.homesick/repos/homeshick/bin/homeshick list | grep -q {{ item }} || $HOME/.homesick/repos/homeshick/bin/homeshick -f clone {{ item }}
+  with_items:
+    - gabor-udvari/dotfiles
+    - gabor-udvari/vim-config
+
+- name: Pull all castles
+  shell: $HOME/.homesick/repos/homeshick/bin/homeshick pull -f
+
+- name: Link all castles
+  shell: $HOME/.homesick/repos/homeshick/bin/homeshick link -f

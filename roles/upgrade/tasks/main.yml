@@ -1,0 +1,13 @@
+---
+- name: Upgrade with apt
+  apt: upgrade=dist update_cache=yes dpkg_options='force-confold,force-confdef'
+
+- name: Check if reboot is required
+  stat: path=/var/run/reboot-required
+  register: reboot_required
+
+- name: Schedule a reboot
+  command: /sbin/shutdown -r 03:00
+  async: 86400
+  poll: 0
+  # when: reboot_required.stat.exists == True

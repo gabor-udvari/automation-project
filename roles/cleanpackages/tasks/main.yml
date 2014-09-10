@@ -1,0 +1,61 @@
+---
+- name: Remove unnecessary packages
+  apt: name={{ item }} purge=yes state=absent
+  with_items:
+  - accountsservice
+  - anacron
+  - apparmor
+  - chkconfig
+  - command-not-found
+  - command-not-found-data
+  - discover
+  - dosfstools
+  - ed
+  - firefox-locale-en
+  - iputils-tracepath
+  - iw
+  - keyutils
+  - language-pack-gnome-en
+  - language-selector
+  - mc
+  - mc-data
+  - libaccountsservice0
+  - ltrace
+  - mlocate
+  - mtr-tiny
+  - ncurses-term
+  - netcat
+  - netcat-traditional
+  - parted
+  - powermgmt-base
+  - shared-mime-info
+  - ssh
+  - strace
+  - telnet
+  - ubuntu-standard
+  - update-inetd
+  - w3m
+  - whois
+
+- name: Install useful packages
+  apt: name={{ item }} state=present
+  with_items:
+  - apt-transport-https
+  - busybox-static
+  - console-common
+  - curl
+  - landscape-common
+  - openssh-client
+  - openssh-server
+  - popularity-contest
+  - rsync
+  - time
+  - tmux
+  - update-notifier-common
+  - vim
+
+- name: Autoremove any leftover packages
+  command: apt-get autoremove -y
+  register: command_result
+  changed_when: "'0 to remove and 0 not upgraded' not in command_result.stdout"
+
