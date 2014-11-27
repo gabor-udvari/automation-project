@@ -45,6 +45,7 @@
   - console-common
   - curl
   - landscape-common
+  - lvm2
   - openssh-client
   - openssh-server
   - popularity-contest

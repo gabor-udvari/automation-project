@@ -6,4 +6,5 @@
 
   roles:
     - grub2
+    - oldkernels
     - cleanpackages
