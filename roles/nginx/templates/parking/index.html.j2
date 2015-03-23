@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Udi Online - {{ ansible_hostname }}</title>
+<style type="text/css">
+body {
+	background: #ccc url(design-bg.png) repeat;
+}
+
+html, body, #intro {
+	height: 100%;
+	font-family: sans-serif;
+}
+
+#intro {
+	position: relative;
+	width: 100%;
+}
+
+#intro-inner {
+	position: relative;
+	width: 300px;
+	height: 200px;
+	top: 50%;
+	margin-top: -120px; /*-20*/
+	margin-left: -150px;
+	left: 50%;
+	text-align: center;
+}
+#logo {
+	text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro"><div id="intro-inner">
+<div id="logo"><a href="http://udionline.hu"><img src="design-logo.png"></a></div>
+<p>{{ ansible_hostname }}</p>
+</div></div><!-- /#intro-inner, #intro -->
+</body>
+
+</html> 

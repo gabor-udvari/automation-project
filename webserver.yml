@@ -1,0 +1,9 @@
+---
+- name: Webserver tasks
+  hosts: webservers
+  # user: root
+  sudo: yes
+
+  roles:
+    - nginx
+    # - mysql

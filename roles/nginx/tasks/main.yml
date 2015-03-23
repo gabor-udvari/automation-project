@@ -1,0 +1,16 @@
+---
+- name: Check nginx packages
+  apt: name=nginx-full state=present
+  # apt: name={{ item }} state=absent
+  # with_items:
+  # - grub2
+  # - grub
+
+- name: Copy correct nginx config
+  # template: src=roles/nginx/templates/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+  copy: src=roles/nginx/templates/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+
+- include: parking.yml
+
+- name: Restart nginx
+  command: /usr/sbin/service nginx restart

@@ -1,0 +1,25 @@
+---
+
+- name: Check www folder
+  file: path=/var/www owner=www-data group=www-data mode=0774 state=directory
+
+- name: Check parking folder
+  file: path=/var/www/parking owner=www-data group=www-data mode=0774 state=directory
+
+- name: Copy parking page static files
+  copy: src=roles/nginx/templates/parking/{{ item }} dest=/var/www/parking/ owner=www-data group=www-data mode=0664
+  with_items:
+    - design-bg.png
+    - design-logo.png
+
+- name: Copy template index file
+  template: src=roles/nginx/templates/parking/index.html.j2 dest=/var/www/parking/index.html owner=www-data group=www-data mode=0664
+
+- name: Disable default nginx site file
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Copy parking site file
+  copy: src=roles/nginx/templates/parking.site dest=/etc/nginx/sites-available/parking owner=root group=root mode=0644
+
+- name: Enable parking site file
+  file: src=/etc/nginx/sites-available/parking path=/etc/nginx/sites-enabled/parking state=link
