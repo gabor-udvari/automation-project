@@ -1,5 +1,5 @@
 ---
-- name: Upgrade all Ubuntu systems
+- name: Upgrade Ubuntu systems
   hosts: all
   # user: root
   sudo: yes
