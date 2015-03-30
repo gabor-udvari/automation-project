@@ -8,6 +8,9 @@
 
 - name: Copy correct grub config
   template: src=roles/grub2/templates/grub dest=/etc/default/grub owner=root group=root mode=0644
+  register: result
+  ignore_errors: True
 
 - name: Generate grub2
   command: /usr/sbin/update-grub
+  when: result|changed

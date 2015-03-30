@@ -1,5 +1,5 @@
 ---
 - name: Remove old kernels
   shell: apt-get remove -y --purge $(dpkg -l 'linux-image-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d')
-  # register: command_result
-  # changed_when: "'0 to remove and 0 not upgraded' not in command_result.stdout"
+  register: command_result
+  changed_when: "'0 to remove and 0 not upgraded' not in command_result.stdout"
