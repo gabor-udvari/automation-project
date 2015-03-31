@@ -35,7 +35,6 @@
   - ubuntu-standard
   - update-inetd
   - w3m
-  - whois
 
 - name: Install useful packages
   apt: name={{ item }} state=present
