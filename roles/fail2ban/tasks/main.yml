@@ -1,0 +1,6 @@
+---
+- name: Check fail2ban and iptables package
+  apt: name={{ item }} state=present
+  with_items:
+  - iptables
+  - fail2ban

@@ -6,5 +6,6 @@
 
   roles:
     - grub2
+    - fail2ban
     - oldkernels
     - cleanpackages
