@@ -6,4 +6,5 @@
 
   roles:
     - nginx
-    # - mysql
+    - mariadb
+    - php

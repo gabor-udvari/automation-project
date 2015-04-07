@@ -1,0 +1,11 @@
+---
+- name: Check mariadb packages
+  apt: name={{ item }} state=present
+  with_items:
+  - mariadb-server
+
+- name: Delete mysql-server packages
+  apt: name={{ item }} purge=yes state=absent
+  with_items:
+  - mysql-server
+  - mysql-client

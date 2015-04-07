@@ -8,9 +8,17 @@
 
 - name: Copy correct nginx config
   # template: src=roles/nginx/templates/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
-  copy: src=roles/nginx/templates/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+  copy: src=roles/nginx/files/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+  register: nginxconf
+  ignore_errors: True
 
-- include: parking.yml
+- name: Copy general global.inc configuration file
+  copy: src=roles/nginx/files/global.inc dest=/etc/nginx/conf.d/global.inc owner=root group=root mode=0644
+  register: globalinc
+  ignore_errors: True
 
 - name: Restart nginx
-  command: /usr/sbin/service nginx restart
+  command: service nginx restart
+  when: nginxconf|changed or globalinc|changed
+
+- include: parking.yml

@@ -1,0 +1,17 @@
+---
+- name: Check php packages
+  apt: name={{ item }} state=present
+  with_items:
+  - php5-fpm
+  - php5-curl
+  - php5-gd
+  - php5-mysql
+
+- name: Copy custom php.ini
+  copy: src=roles/php/files/local.ini dest=/etc/php5/fpm/conf.d/local.ini owner=root group=root mode=0644
+  register: copyini
+  ignore_errors: True
+
+- name: Restart php
+  command: service php5-fpm restart
+  when: copyini|changed

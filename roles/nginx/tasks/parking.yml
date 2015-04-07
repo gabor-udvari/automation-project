@@ -12,7 +12,7 @@
     - design-bg.png
     - design-logo.png
 
-- name: Copy template index file
+- name: Copy parking page index template
   template: src=roles/nginx/templates/parking/index.html.j2 dest=/var/www/parking/index.html owner=www-data group=www-data mode=0664
 
 - name: Disable default nginx site file
@@ -23,3 +23,8 @@
 
 - name: Enable parking site file
   file: src=/etc/nginx/sites-available/parking path=/etc/nginx/sites-enabled/parking state=link
+  register: parkingenable
+
+- name: Restart nginx
+  command: /usr/sbin/service nginx restart
+  when: parkingenable|changed
