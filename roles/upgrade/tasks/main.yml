@@ -1,6 +1,12 @@
 ---
-- name: Upgrade with apt
+- name: Upgrade with apt (update cache)
   apt: upgrade=dist update_cache=yes dpkg_options='force-confold,force-confdef'
+  register: apt_result
+  ignore_errors: True
+
+- name: Upgrade with apt
+  apt: upgrade=dist update_cache=no dpkg_options='force-confold,force-confdef'
+  when: "'Could not fetch updated apt files' in apt_result.stderr"
 
 - name: Check if reboot is required
   stat: path=/var/run/reboot-required
