@@ -13,7 +13,7 @@
   register: reboot_required
 
 - name: Schedule a reboot
-  command: /sbin/shutdown -r 03:00
+  shell: /usr/bin/nohup /sbin/shutdown -r 03:00 &
   async: 45
   poll: 0
   when: reboot_required.stat.exists == True
