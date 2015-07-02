@@ -1,9 +1,7 @@
 ---
 - name: Install homeshick on all servers
   hosts: all
-  user: udi
-  remote_user: udi
-  sudo: no
+  sudo: yes
 
   roles:
     - homeshick

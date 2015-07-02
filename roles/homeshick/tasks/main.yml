@@ -1,8 +1,6 @@
 ---
 - name: Check git
   apt: name=git state=present
-  remote_user: root
-  sudo: yes
 
 - name: Check homeshick
   stat: path=~/.homesick/repos/homeshick
@@ -19,7 +17,11 @@
     - gabor-udvari/vim-config
 
 - name: Pull all castles
-  shell: $HOME/.homesick/repos/homeshick/bin/homeshick pull -f
+  command: $HOME/.homesick/repos/homeshick/bin/homeshick -f pull
+  async: 60
+  poll: 10
 
 - name: Link all castles
-  shell: $HOME/.homesick/repos/homeshick/bin/homeshick link -f
+  command: $HOME/.homesick/repos/homeshick/bin/homeshick -f link
+  async: 60
+  poll: 10
