@@ -8,6 +8,11 @@
   apt: upgrade=dist update_cache=no dpkg_options='force-confold,force-confdef'
   when: "'Could not fetch updated apt files' in apt_result.stderr"
 
+- name: Update MOTD
+  shell: run-parts --lsbsysinit /etc/update-motd.d 1>/dev/null 2>&1
+  async: 45
+  poll: 0
+
 - name: Check if reboot is required
   stat: path=/var/run/reboot-required
   register: reboot_required
