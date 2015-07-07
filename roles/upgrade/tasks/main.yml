@@ -9,7 +9,7 @@
   when: "'Could not fetch updated apt files' in apt_result.stderr"
 
 - name: Update MOTD
-  shell: run-parts --lsbsysinit /etc/update-motd.d 1>/dev/null 2>&1
+  shell: sh -c 'run-parts --lsbsysinit /etc/update-motd.d >/var/run/motd.dynamic 2>/dev/null'
   async: 45
   poll: 0
 
