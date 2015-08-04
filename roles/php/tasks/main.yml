@@ -6,12 +6,18 @@
   - php5-curl
   - php5-gd
   - php5-mysql
+  - php5-apcu
 
 - name: Copy custom php.ini
   copy: src=roles/php/files/local.ini dest=/etc/php5/fpm/conf.d/local.ini owner=root group=root mode=0644
   register: copyini
   ignore_errors: True
 
+- name: Copy custom www.conf
+  copy: src=roles/php/files/www.conf dest=/etc/php5/fpm/pool.d/www.conf owner=root group=root mode=0644
+  register: copywwwconf
+  ignore_errors: True
+
 - name: Restart php
   command: service php5-fpm restart
-  when: copyini|changed
+  when: copyini|changed or copywwwconf|changed
