@@ -1,0 +1,9 @@
+---
+- name: Check locale
+  shell: locale -a | grep 'hu_HU.utf8'
+  register: locale_check
+  ignore_errors: True
+
+- name: Install locale if missing
+  command: locale-gen 'hu_HU.utf8'
+  when: locale_check|failed

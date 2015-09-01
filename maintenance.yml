@@ -9,3 +9,4 @@
     - fail2ban
     - oldkernels
     - cleanpackages
+    - locale
