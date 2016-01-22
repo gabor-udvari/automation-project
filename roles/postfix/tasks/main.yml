@@ -3,4 +3,5 @@
   apt: name={{ item }} state=present
   with_items:
   - postfix
+  - postfix-mysql
   - mailutils
