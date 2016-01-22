@@ -2,7 +2,8 @@
 - name: Upgrade Ubuntu systems
   hosts: all
   # user: root
-  sudo: yes
+  become: true
+  become_method: sudo
 
   roles:
     - upgrade

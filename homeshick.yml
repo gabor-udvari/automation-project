@@ -1,7 +1,8 @@
 ---
 - name: Install homeshick on all servers
   hosts: all
-  sudo: yes
+  become: true
+  become_method: sudo
 
   roles:
     - homeshick

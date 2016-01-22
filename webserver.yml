@@ -1,8 +1,8 @@
 ---
 - name: Webserver tasks
   hosts: webservers
-  # user: root
-  sudo: yes
+  become: true
+  become_method: sudo
 
   roles:
     - nginx

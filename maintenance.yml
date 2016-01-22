@@ -1,8 +1,8 @@
 ---
 - name: Maintenance tasks
   hosts: all
-  # user: root
-  sudo: yes
+  become: true
+  become_method: sudo
 
   roles:
     - grub2
