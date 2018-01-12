@@ -5,7 +5,29 @@
   become_method: sudo
 
   roles:
-    - nginx
-    - mariadb
-    - php
-    - postfix
+    # nginx, mariadb_server, php
+
+    # pre-requisites
+    - role: debops.php/env
+
+    # dependencies
+    - role: debops.apt_preferences
+      apt_preferences__dependent_list:
+        - '{{ nginx__apt_preferences__dependent_list }}'
+        - '{{ php__apt_preferences__dependent_list }}'
+
+    - role: debops.ferm
+      tags: [ 'role::ferm' ]
+      ferm__dependent_rules:
+        - '{{ nginx__ferm__dependent_rules }}'
+        - '{{ mariadb_server__ferm__dependent_rules }}'
+
+    - role: debops.tcpwrappers
+      tcpwrappers__dependent__allow:
+        - '{{ mariadb_server__tcpwrappers__dependent_allow }}'
+
+    # actual roles
+    - role: debops.nginx
+    - role: debops.php
+    - role: debops.mariadb_server
+    - parking
