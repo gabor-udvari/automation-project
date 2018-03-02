@@ -9,15 +9,16 @@
 
     # pre-requisites
     - role: debops.php/env
+      tags: [ 'role::php' ]
 
     # dependencies
     - role: debops.apt_preferences
+      tags: [ 'role::php' ]
       apt_preferences__dependent_list:
         - '{{ nginx__apt_preferences__dependent_list }}'
         - '{{ php__apt_preferences__dependent_list }}'
 
     - role: debops.ferm
-      tags: [ 'role::ferm' ]
       ferm__dependent_rules:
         - '{{ nginx__ferm__dependent_rules }}'
         - '{{ mariadb_server__ferm__dependent_rules }}'
@@ -26,8 +27,14 @@
       tcpwrappers__dependent__allow:
         - '{{ mariadb_server__tcpwrappers__dependent_allow }}'
 
+    - role: debops.logrotate
+      tags: [ 'role::logrotate' ]
+      logrotate__dependent_config:
+        - '{{ php__logrotate__dependent_config }}'
+
     # actual roles
     - role: debops.nginx
     - role: debops.php
+      tags: [ 'role::php' ]
     - role: debops.mariadb_server
     - parking
