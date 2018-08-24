@@ -1,0 +1,14 @@
+---
+- name: Transmission
+  hosts: htpc
+  become: true
+  become_method: sudo
+
+  roles:
+    - role: debops.ferm
+      tags: [ 'role::ferm' ]
+      ferm__dependent_rules:
+        - '{{ transmission__ferm__dependent_rules }}'
+
+    - role: transmission
+      tags: [ 'role::transmission' ]

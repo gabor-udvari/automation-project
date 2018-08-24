@@ -1,0 +1,9 @@
+---
+- name: Install required packages
+  apt:
+    name: '{{ item }}'
+    state: 'latest'
+    install_recommends: False
+  with_items:
+    - transmission-daemon
+    - transmission-cli
