@@ -1,0 +1,9 @@
+xdebug__ferm__dependent_rules:
+
+  - type: 'accept'
+    protocol: [ 'tcp', 'udp']
+    dport: [ 9000 ]
+    accept_any: True
+    weight: '40'
+    by_role: 'xdebug'
+    name: 'xdebug'

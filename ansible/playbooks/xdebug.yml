@@ -1,0 +1,47 @@
+---
+- name: Xdebug for PHP
+  hosts: webdev
+  become: true
+  become_method: sudo
+  vars:
+    # Install xdebug
+    php__group_packages: [ 'xdebug' ]
+    # Include xdebug.so in php.ini
+    php__group_configuration:
+      # Add this to both fpm and cli php.ini
+      - filename: '20-xdebug'
+        path: 'fpm/conf.d/'
+        sections:
+          - options: |
+              zend_extension=xdebug.so
+              xdebug.remote_enable=on
+              xdebug.remote_handler=dbgp
+              xdebug.remote_host=localhost
+              xdebug.remote_port=9000
+
+      - filename: '20-xdebug'
+        path: 'cli/conf.d/'
+        sections:
+          - options: |
+              zend_extension=xdebug.so
+              xdebug.remote_enable=on
+              xdebug.remote_handler=dbgp
+              xdebug.remote_host=localhost
+              xdebug.remote_port=9000
+
+  roles:
+    # pre-requisites
+    - role: debops.php/env
+      tags: [ 'role::php' ]
+
+    - role: debops.ferm
+      tags: [ 'role::ferm' ]
+      ferm__dependent_rules:
+        - '{{ xdebug__ferm__dependent_rules }}'
+
+    - role: xdebug
+      tags: [ 'role::xdebug' ]
+
+    # actual roles
+    - role: debops.php
+      tags: [ 'role::php' ]
