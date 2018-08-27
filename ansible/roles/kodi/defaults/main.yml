@@ -1,0 +1,10 @@
+kodi__ferm__dependent_rules:
+
+  - type: 'accept'
+    protocol: [ 'tcp', 'udp']
+    dport: [ 1578, 1900, 2233, 8080, 9090, 9777 ]
+    saddr: [ '192.168.0.0/24' ]
+    accept_any: True
+    weight: '40'
+    by_role: 'kodi'
+    name: 'kodi'

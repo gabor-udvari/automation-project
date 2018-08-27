@@ -1,0 +1,18 @@
+# Team Kodi stable releases repository
+
+- name: Add Team Kodi APT key
+  apt_key:
+    id: '{{ kodi__ppa_apt_key_id }}'
+    state: 'present'
+    keyserver: '{{ ansible_local.core.keyserver
+                   if (ansible_local|d() and ansible_local.core|d() and
+                       ansible_local.core.keyserver)
+                   else "hkp://pool.sks-keyservers.net" }}'
+  when: kodi__ppa|bool
+
+- name: Add Team Kodi repository
+  apt_repository:
+    repo: '{{ kodi__ppa_apt_repo }}'
+    state: 'present'
+    update_cache: True
+  when: kodi__ppa|bool

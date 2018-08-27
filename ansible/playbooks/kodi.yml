@@ -1,0 +1,19 @@
+---
+- name: Kodi
+  hosts: htpc
+  become: true
+  become_method: sudo
+
+  roles:
+    - role: kodi/env
+      tags: [ 'role::kodi' ]
+      ferm__dependent_rules:
+        - '{{ kodi__ferm__dependent_rules }}'
+
+    - role: debops.ferm
+      tags: [ 'role::ferm' ]
+      ferm__dependent_rules:
+        - '{{ kodi__ferm__dependent_rules }}'
+
+    - role: kodi
+      tags: [ 'role::kodi' ]
