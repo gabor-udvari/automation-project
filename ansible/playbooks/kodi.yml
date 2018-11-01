@@ -5,6 +5,12 @@
   become_method: sudo
 
   roles:
+    # For nfs_server
+    - role: debops.etc_services
+      tags: [ 'role::etc_services', 'role::ferm' ]
+      etc_services__dependent_list:
+        - '{{ nfs_server__etc_services__dependent_list }}'
+
     - role: kodi/env
       tags: [ 'role::kodi' ]
       ferm__dependent_rules:
@@ -14,6 +20,16 @@
       tags: [ 'role::ferm' ]
       ferm__dependent_rules:
         - '{{ kodi__ferm__dependent_rules }}'
+        - '{{ nfs_server__ferm__dependent_rules }}'
+
+    # For nfs_server
+    - role: debops.tcpwrappers
+      tags: [ 'role::tcpwrappers' ]
+      tcpwrappers__dependent_allow:
+        - '{{ nfs_server__tcpwrappers__dependent_allow }}'
 
     - role: kodi
       tags: [ 'role::kodi' ]
+
+    - role: debops.nfs_server
+      tags: [ 'role::nfs_server' ]
