@@ -1,5 +1,5 @@
 server {
-	listen   [::]:80;
+	listen   [::]:80 default_server;
 
 	# empty server_name to make this the default
 	server_name "";
