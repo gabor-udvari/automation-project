@@ -6,7 +6,7 @@
 
 - name: Upgrade with apt
   apt: upgrade=dist update_cache=no dpkg_options='force-confold,force-confdef'
-  when: apt_result|failed
+  when: apt_result is failed
 
 - name: Update MOTD
   shell: sh -c 'run-parts --lsbsysinit /etc/update-motd.d >/var/run/motd.dynamic 2>/dev/null'
