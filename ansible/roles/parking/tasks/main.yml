@@ -30,4 +30,4 @@
 
 - name: Restart nginx
   command: /usr/sbin/service nginx restart
-  when: parkingenable|changed
+  when: parkingenable is changed
