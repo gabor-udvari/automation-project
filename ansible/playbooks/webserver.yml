@@ -10,6 +10,15 @@
         name: ['python3-mysqldb']
         state: present
 
+    - name: Check that dhparam file exists
+      stat:
+        path: /etc/nginx/dhparam.pem
+      register: dhparam_result
+
+    - name: Create the dhparam file, if it does not exist already
+      command: openssl dhparam -out /etc/nginx/dhparam.pem 2048
+      when: dhparam_result.stat.exists == False
+
   roles:
     # nginx, mariadb_server, php
 

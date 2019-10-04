@@ -1,5 +1,5 @@
 server {
-	listen   [::]:80 default_server;
+	listen   [::]:80 default_server ipv6only=off;
 
 	# empty server_name to make this the default
 	server_name "";
