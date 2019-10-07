@@ -21,6 +21,10 @@
 
   roles:
     # nginx, mariadb_server, php
+    - role: debops.keyring
+      tags: [ 'role::keyring', 'skip::keyring', 'role::php' ]
+      keyring__dependent_apt_keys:
+        - '{{ php__keyring__dependent_apt_keys }}'
 
     # pre-requisites
     - role: debops.php/env
@@ -52,4 +56,4 @@
     - role: debops.php
       tags: [ 'role::php' ]
     - role: debops.mariadb_server
-    - parking
+    - role: parking
