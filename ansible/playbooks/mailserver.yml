@@ -1,0 +1,135 @@
+---
+- name: Mailserver tasks
+  hosts: mailservers
+  become: true
+  become_method: sudo
+
+  collections: [ 'debops.debops', 'debops.roles01',
+                   'debops.roles02', 'debops.roles03' ]
+
+  environment: '{{ inventory__environment | d({})
+                   | combine(inventory__group_environment | d({}))
+                   | combine(inventory__host_environment  | d({})) }}'
+
+  pre_tasks:
+    - import_role:
+        name: 'etc_aliases'
+        tasks_from: 'main_env'
+
+    - import_role:
+        name: 'dovecot'
+        tasks_from: 'main_env'
+      vars:
+        dovecot_protocols: [ 'pop3', 'imap', 'managesieve', 'lmtp' ]
+        dovecot_user_accounts: [ 'deny', 'system', 'sql' ]
+
+    - import_role:
+        name: 'postfix'
+        tasks_from: 'main_env'
+      vars:
+        postfix__packages: [ 'postfix-sqlite' ]
+        postfix__dependent_maincf:
+          - role: 'dovecot'
+            config: '{{ dovecot__postfix__dependent_maincf }}'
+        postfix__dependent_mastercf:
+          - role: 'dovecot'
+            config: '{{ dovecot__postfix__dependent_mastercf }}'
+        postfix__maincf:
+          - virtual_mailbox_base: '/var/vmail' # no trailing / for base, virtual maps will add it
+          - virtual_alias_maps: [ 'proxy:sqlite:${config_directory}/virtual_alias_maps.cf' ]
+          - virtual_mailbox_domains: [ 'proxy:sqlite:${config_directory}/virtual_domain_maps.cf' ]
+          - virtual_mailbox_maps: [ 'proxy:sqlite:${config_directory}/virtual_mailbox_maps.cf' ]
+        # Add smtps and submission to the services
+        postfix__mastercf:
+          - name: 'smtps'
+            type: 'inet'
+            private: False
+            chroot: True
+            command: 'smtpd'
+            state: 'present'
+          - name: 'submission'
+            type: 'inet'
+            private: False
+            chroot: True
+            command: 'smtpd'
+            state: 'present'
+        # Firewall configuration
+        postfix__accept_any: True
+    - name: 'Create virtual_alias_maps.cf'
+      copy:
+        dest: /etc/postfix/virtual_alias_maps.cf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+        content: |
+          # Path to database
+          dbpath = /var/vmail/db.sqlite3
+          query = SELECT alias FROM aliases WHERE email = '%s'
+    - name: 'Create virtual_domain_maps.cf'
+      copy:
+        dest: /etc/postfix/virtual_domain_maps.cf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+        content: |
+          # Path to database
+          dbpath = /var/vmail/db.sqlite3
+          query = SELECT domain FROM domains WHERE domain = '%s'
+    - name: 'Create virtual_mailbox_maps.cf'
+      copy:
+        dest: /etc/postfix/virtual_mailbox_maps.cf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+        content: |
+          # Path to database
+          dbpath = /var/vmail/db.sqlite3
+          query = SELECT email FROM users WHERE email = '%s'
+          result_format = %d/%u/
+
+    - name: 'Install dovecot-sqlite'
+      apt:
+        name: dovecot-sqlite
+        state: present
+
+  roles:
+    # - role: secret
+    #   secret__directories:
+    #     - '{{ etc_aliases__secret__directories }}'
+    #     - '{{ postfix__secret__directories }}'
+
+    # - role: ferm
+    #   ferm__dependent_rules:
+    #     - '{{ postfix__ferm__dependent_rules }}'
+    #     - '{{ dovecot__ferm__dependent_rules }}'
+
+    # - role: etc_aliases
+
+    - role: postfix
+      postfix__dependent_maincf:
+        - role: 'dovecot'
+          config: '{{ dovecot__postfix__dependent_maincf }}'
+      postfix__dependent_mastercf:
+        - role: 'dovecot'
+          config: '{{ dovecot__postfix__dependent_mastercf }}'
+
+    - role: dovecot
+
+  post_tasks:
+    - name: 'Overwrite dovecot-sql.conf.ext'
+      copy:
+        dest: /etc/dovecot/dovecot-sql.conf.ext
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+        content: |
+          driver = sqlite
+          connect = /var/vmail/db.sqlite3
+          default_pass_scheme = SSHA512
+          password_query = SELECT password FROM users WHERE email = '%u'
+          user_query = SELECT '/var/vmail/%d/%n' AS home, \
+          8 AS uid, 8 AS gid, '*:storage=' || quota AS quota_rule \
+          FROM users WHERE email = '%u'
+          iterate_query = SELECT email AS user FROM users
+      notify: [ 'Restart dovecot' ]
+      # Restart dovecot is a global handler defined by debops
